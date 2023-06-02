@@ -136,10 +136,9 @@ const userDashboardLinks = async (req, res) => {
   // add isSubscriber: true else isSubscriber: false
 
   const allSubmittedLinks = await linksModel.find();
-  const linksSubscribedByUser = await subscriptionModel.find();
-
+  const linksSubscribedByUser = await subscriptionModel.find({user: userId});
   const subscribedLinksIds = linksSubscribedByUser.map(
-    (link) => link.youtubeID
+    (link) => link.youtubeID.toString()
   );
   const totalLinks = allSubmittedLinks.length;
   const TotalLinksSubscribeByUser = linksSubscribedByUser.length;
@@ -148,7 +147,7 @@ const userDashboardLinks = async (req, res) => {
      allSubmittedLinks.map(async (submittedLink) => {
 
        let isSubscriber;
-       let userSubscribedToTheLink = subscribedLinksIds.includes(submittedLink._id)
+       let userSubscribedToTheLink = subscribedLinksIds.includes(submittedLink._id.toString());
        if (userSubscribedToTheLink) {
          isSubscriber = true;
        } else {
@@ -163,20 +162,21 @@ const userDashboardLinks = async (req, res) => {
          youtubeName: submittedLink.youtubeName,
          youtubeURL: submittedLink.youtubeURL,
          isSubscriber: isSubscriber,
+         
        };
      })
    );
 
-//  return res
-//     .status(200)
-//     .json({
-//       data: {
-//         ...linksWithSubscriptionProperty,
-//         totalLinks: totalLinks,
-//         TotalLinksSubscribeByUser: TotalLinksSubscribeByUser,
-//       },
-//       isSuccess: true,
-//     });
+ return res
+    .status(200)
+    .json({
+      data: {
+        links: linksWithSubscriptionProperty,
+        totalLinks,
+         TotalLinksSubscribeByUser,
+      },
+      isSuccess: true,
+    });
 };
 
 module.exports = {
