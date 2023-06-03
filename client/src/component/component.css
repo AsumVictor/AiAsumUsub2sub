@@ -1,0 +1,57 @@
+:root {
+    --sideNavWidth: 5cm;
+    --navbarHeight: 1.5cm;
+}
+
+.layout{
+    overflow-x: hidden;
+    height: 100vh;
+    overflow: hidden;
+}
+
+main{
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.sidebar {
+    height: 1.6cm;
+    position: fixed;
+    left: 0;
+    width: 100%;
+    bottom: 0;
+    overflow: hidden;
+    border-top: 5px solid;
+    border-right: 0px solid;
+}
+
+.navbar{
+ width: 100%;
+ height: var(--navbarHeight);
+}
+
+
+
+@media screen and (min-width: 768px) {
+    .layout {
+        padding-left: var(--sideNavWidth);
+    }
+
+    .sidebar {
+        height: 100%;
+        position: fixed;
+        left: 0;
+        width: var(--sideNavWidth);
+        top: 0;
+        overflow: hidden;
+        border-top: 0px solid;
+        border-right: 5px solid;
+        padding: 0px;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        padding-top: 10px;
+    }
+
+}
