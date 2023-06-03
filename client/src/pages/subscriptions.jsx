@@ -1,9 +1,12 @@
 import React from 'react'
+import UnderConstruction from '../component/underConstruction'
 
 function Subscriptions() {
   return (
-    <div>Subscriptions</div>
+    <>
+     <UnderConstruction message={'Oops 😞! This page is under construction. Kindly exercise patience🥰'}/>
+    </>
   )
 }
 
-export default Subscriptions
+export default Subscriptions 

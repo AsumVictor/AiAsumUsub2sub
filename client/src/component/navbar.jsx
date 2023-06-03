@@ -14,7 +14,7 @@ const [showProfileMenu, setShowProfileMenu] = useState(false);
 
 return (
     <header
-      className={`navbar md:mt-3 mt-1 bg-darkPrimary sticky top-0 flex items-center justify-around`}
+      className={`z-[99] navbar md:mt-3 mt-1 bg-darkPrimary sticky top-0 flex items-center justify-around`}
     >
 
 

@@ -12,11 +12,11 @@ import {
 
 function SideNav() {
   const normalNavLinkStyle =
-    "w-[4rem] h-[3rem] md:w-[10rem] md:border md:border-transparent md:rounded-[10px] grid grid-rows-2 grid-cols-1 md:grid-rows-1 md:grid-cols-3 md:p-2 px-1 md:items-center text-darkTextPrimary hover:text-pinkPrimary md:hover:border-pinkPrimary md:hover:text-darkTextPrimary transition-all";
+    "w-[4rem] h-[3rem] md:w-[10rem] md:border md:border-transparent md:rounded-[10px] grid grid-rows-2 grid-cols-1 md:grid-rows-1 md:grid-cols-3 md:p-2 px-1 md:px-2 md:items-center text-darkTextPrimary hover:text-pinkPrimary md:hover:border-pinkPrimary md:hover:text-darkTextPrimary transition-all";
 
   return (
     <div
-      className={`sidebar bg-darkPrimary border-darkSecondary overflow-y-auto`}
+      className={`sidebar bg-darkPrimary border-darkSecondary overflow-y-auto z-[99]`}
     >
       <div className="w-[8rem] h-[10rem] hidden md:flex md:flex-col md:items-center justify-center">
         <img src={LogoWhite369} alt="369" className="w-[3rem] h-[5.1rem]" />

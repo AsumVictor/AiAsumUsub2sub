@@ -6,6 +6,8 @@ import {
   HiTrendingUp,
   HiChartBar,
 } from "react-icons/hi";
+import Construction from '../component/underConstruction'
+
 function Dashboard() {
   return (
     <div className="w-full py-2 mt-10 px-3 md:px-10 pb-20">
@@ -121,6 +123,9 @@ function Dashboard() {
       <h2 className="mt-[55px] flex gap-3 px-3 items-center text-darkTextPrimary font-semibold text-[20px]">
         <span>My activity</span> <HiChevronRight />
       </h2>
+
+      <Construction message=' Oops! This content is under construction' />
+  
     </div>
   );
 }
