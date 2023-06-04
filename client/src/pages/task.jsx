@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef  } from "react";
 import Posts from "../component/posts";
 import Pagination from "../component/pagination";
 import axios from "axios";
 import { Helmet } from "react-helmet";
 import { HiChevronRight } from "react-icons/hi2";
 import { animateScroll as scroll } from 'react-scroll';
-
+import { useOutletContext, useSearchParams } from "react-router-dom";
 
 const Task = () => {
+  let [searchParams, setSearchParams] = useSearchParams();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(searchParams.get('page') | 1);
   const [postsPerPage] = useState(12);
+ const scrollTop = useOutletContext()
+
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -32,14 +35,14 @@ const Task = () => {
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-
-  useEffect(() => {
-    // 👇️ scroll to top on page load
-    window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
-  }, [currentPage]);
+  //search param page
+  const handlePageParams = (number) =>{
+    setSearchParams({page: number})
+    scrollTop()
+  }
 
   return (
-    <div className="w-full py-2 mt-10 px-3 md:px-10 pb-20">
+    <div className=" w-full py-2 mt-10 px-3 md:px-10 pb-20">
       <Helmet>
         <title>CoderGuides | Home</title>
       </Helmet>
@@ -53,13 +56,16 @@ const Task = () => {
         <span>All submitted links</span> <HiChevronRight />
       </h2>
 
-      <h1 className="text-primary mb-3">My Blog</h1>
-      <Posts posts={currentPosts} loading={loading} pageNumber={currentPage} />
+      <h1 onClick={()=>handlePageParams(3)} className="text-primary mb-3">My Blog</h1>
+      <Posts posts={currentPosts} loading={loading} pageNumber={currentPage}  />
       <Pagination
         postsPerPage={postsPerPage}
         totalPosts={posts.length}
         paginate={paginate}
+        handleScroll = {handlePageParams}
       />
+
+
 
     </div>
   );
