@@ -1,18 +1,17 @@
-import React from 'react';
+import React from "react";
+import SubscribeCard from "./subscribeCard";
 
-const Posts = ({ posts, loading }) => {
+const Posts = ({ posts, loading, pageNumber }) => {
   if (loading) {
     return <h2>Loading...</h2>;
   }
 
   return (
-    <ul className='list-group mb-4'>
-      {posts.map(post => (
-        <li key={post.id} className='list-group-item'>
-          {post.title}
-        </li>
+    <div className="w-full flex flex-wrap justify-center gap-x-3 py-2 mt-10">
+      {posts.map((post, index) => (
+        <SubscribeCard key={post.id} index={`${((pageNumber -1) * 12) + (index + 1)}`} />
       ))}
-    </ul>
+    </div>
   );
 };
 
