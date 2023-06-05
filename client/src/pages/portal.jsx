@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { HiChevronRight, HiSquare3Stack3D } from "react-icons/hi2";
 import {
   HiViewGrid,
@@ -8,6 +8,12 @@ import {
   HiPlusSm,
 } from "react-icons/hi";
 import ModalBox, { ModalFooter } from "../component/modalBox";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+import { Helmet } from "react-helmet";
+import NoContent from "../component/NoContent";
+import { format } from "timeago.js";
 
 function Portal() {
   const [showModal, setShowModal] = useState(false);
@@ -15,8 +21,9 @@ function Portal() {
   const [isValid, setValid] = useState(false);
   const [link, setLink] =useState('')
   const [youtubeName, setYoutubeName] =useState('')
-
-
+  const [links, setLinks] = useState([])
+  const [loading, setLoading] = useState(false);
+let content;
   const handleLinkChange = (event) => {
     const enteredURL = event.target.value;
     setLink(enteredURL)
@@ -26,8 +33,150 @@ function Portal() {
     setValid(isValidURL);
   };
 
+
+  if(links?.length > 0){
+    content = (
+      <div className="w-full flex flex-col gap-5 py-3 mt-10">
+        {links.map((link,index)=>(
+
+      <div key={link._id} className="grid grid-cols-10 bg-darkSecondary rounded-xl w-full md:w-[40rem] items-center gap-2 px-2 py-2">
+        <span className="col-span-1 w-[2rem] h-[2rem] rounded-full bg-pinkPrimary text-white flex justify-center items-center font-bold">
+          {index + 1}
+        </span>
+        <h4 className=" col-span-7 text-white font-semibold">
+          {link.youtubeName}
+        </h4>
+        <h4 className="col-span-2 text-[12px] font-bold text-darkTextPrimary">
+          {format(link.createdAt)}
+        </h4>
+      </div>
+        ))}
+    </div>
+    )
+  }else {
+    content =(
+     < NoContent customClass={'w-[15rem]'}message={'Oops! you have no link'} />
+    )
+  }
+ 
+
+  const AddLink = async () => {
+    const YouTubelink = {
+      youtubeURL: link,
+      youtubeName,
+      user: "647a7816d64dc3426f846ec6",
+    };
+
+    try {
+      setLoading(true);
+      const res = await axios.post(
+        "http://localhost:4000/links",
+        YouTubelink
+      );
+      if (res.status === 200) {
+        toast.success(`${res?.data?.message}`, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        setLoading(false);
+        setShowModal(false)
+        setLinks((previous)=>[...previous,link]);
+        setLink('')
+        setYoutubeName('')
+
+      } else {
+        toast.error(`${res.response.data.message}`, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      let errorMessage;
+      if (error?.response) {
+        errorMessage = error?.response?.data?.message;
+      } else {
+        errorMessage = error?.message;
+      }
+      toast.error(errorMessage, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+  };
+  
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(
+          "http://localhost:4000/links/user/647a7816d64dc3426f846ec6"
+        );
+        console.log(res)
+        if (res.status === 200) {
+          setLinks(res?.data?.data);
+          setLoading(false);
+        } else {
+          toast.error(`${res.response.data.message}`, {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          setLoading(false);
+        }
+      } catch (error) {
+        setLoading(false);
+        let errorMessage;
+        if (error?.response) {
+          errorMessage = error?.response?.data?.message;
+        } else {
+          errorMessage = error?.message;
+        }
+        toast.error(errorMessage, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
   return (
     <div className="w-full py-2 mt-10 px-3 md:px-10 pb-20">
+        <Helmet>
+        <title>My portal</title>
+      </Helmet>
       <h1 className="text-[18px] font-semibold text-darkTextPrimary">
         Thursday,
       </h1>
@@ -87,19 +236,7 @@ function Portal() {
         <span>All my youtube links</span> <HiChevronRight />
       </h2>
 
-      <div className="w-full flex flex-col gap-5 py-3 mt-10">
-        <div className="grid grid-cols-10 bg-darkSecondary rounded-xl w-full md:w-[40rem] items-center gap-2 px-2 py-2">
-          <span className="col-span-1 w-[2rem] h-[2rem] rounded-full bg-pinkPrimary text-white flex justify-center items-center font-bold">
-            1
-          </span>
-          <h4 className=" col-span-7 text-white font-semibold">
-            The magic chrome book of the death
-          </h4>
-          <h4 className="col-span-2 text-[12px] font-bold text-darkTextPrimary">
-            2 days ago
-          </h4>
-        </div>
-      </div>
+     {content}
 
       {showModal && (
         <ModalBox
@@ -112,8 +249,8 @@ function Portal() {
               >
                 CANCEL
               </button>
-              <button className="py-1 bg-emerald-600 font-bold px-3 rounded-md text-white">
-                Add link
+              <button className="py-1 bg-emerald-600 font-bold px-3 rounded-md text-white  disabled:bg-slate-400 disabled:cursor-not-allowed" onClick={()=>AddLink()} disabled={link.trim().length ===0 || youtubeName.trim().length ===0 || !isValid}>
+                {loading? 'Adding...': 'Add link'}
               </button>
             </ModalFooter>
           }
@@ -126,7 +263,7 @@ function Portal() {
               type="text"
               name="youtubeName"
               placeholder="AiAsum Sub2Sub"
-                            onChange={(e)=>setYoutubeName(e.target.value)}
+              onChange={(e)=>setYoutubeName(e.target.value)}
               className="w-full mt-1 h-[2rem] rounded-md outline-0 border-2 bg-darkSecondary border-darkTextPrimary text-darkTextPrimary px-2 font-semibold placeholder-darkTertiary"
             />
              <p className="font-semibold text-darkTextPrimary mt-4">
@@ -143,6 +280,7 @@ function Portal() {
           </div>
         </ModalBox>
       )}
+      <ToastContainer />
     </div>
   );
 }

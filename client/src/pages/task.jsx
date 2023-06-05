@@ -146,7 +146,7 @@ const Task = () => {
   return (
     <div className=" w-full py-2 mt-10 px-3 md:px-10 pb-20">
       <Helmet>
-        <title>CoderGuides | Home</title>
+        <title>SubScribe to Channel</title>
       </Helmet>
 
       <h1 className="text-[18px] font-semibold text-darkTextPrimary">
