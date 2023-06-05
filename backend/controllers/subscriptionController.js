@@ -135,7 +135,7 @@ const userDashboardLinks = async (req, res) => {
   // loop through all submitted links if linkArray includes a submitted link
   // add isSubscriber: true else isSubscriber: false
 
-  const allSubmittedLinks = await linksModel.find();
+  const allSubmittedLinks = await linksModel.find().sort({createdAt: -1});
   const linksSubscribedByUser = await subscriptionModel.find({user: userId});
   const subscribedLinksIds = linksSubscribedByUser.map(
     (link) => link.youtubeID.toString()

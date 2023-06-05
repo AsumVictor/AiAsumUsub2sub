@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { HiChevronRight, HiSquare3Stack3D } from "react-icons/hi2";
 import {
   HiViewGrid,
@@ -7,8 +7,72 @@ import {
   HiChartBar,
 } from "react-icons/hi";
 import Construction from '../component/underConstruction'
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
+
 
 function Dashboard() {
+  const [posts, setPosts] = useState(null);
+  const [loading, setLoading] = useState(false);
+  let numberOfSubscribedLinks = 0;
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(
+          "http://localhost:4000/subscriptions/sub/647a7816d64dc3426f846ec6"
+        );
+        if (res.status === 200) {
+          setPosts(res.data.data.links);
+          setLoading(false);
+        } else {
+          toast.error(`${res.response.data.message}`, {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          setLoading(false);
+        }
+      } catch (error) {
+        setLoading(false);
+        let errorMessage;
+        if (error?.response) {
+          errorMessage = error?.response?.data?.message;
+        } else {
+          errorMessage = error?.message;
+        }
+        toast.error(errorMessage, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+    };
+    fetchPosts();
+  }, []);
+
+if(posts){
+  for (let i = 0; i < posts.length; i++) {
+     if(posts[i].isSubscriber){
+      numberOfSubscribedLinks += 1
+     }else{
+      numberOfSubscribedLinks = 0
+     }
+    
+  }
+}
+  // Check number od subscribed links
   return (
     <div className="w-full py-2 mt-10 px-3 md:px-10 pb-20">
       <h1 className="text-[18px] font-semibold text-darkTextPrimary">
@@ -38,15 +102,15 @@ function Dashboard() {
           <div className="w-full bg-darkPrimary rounded-full h-3 mt-10">
             <div
               className=" bg-pinkPrimary h-3 rounded-full"
-              style={{ width: "36%" }}
+              style={{ width: `${(numberOfSubscribedLinks/50)* 100}%` }}
             ></div>
           </div>
 
           <div className="w-full mt-5 flex flex-row justify-between">
             <h4 className=" text-darkTextPrimary font-semibold">
-              36% completed
+              {`${(numberOfSubscribedLinks/50)* 100}% completed`}
             </h4>
-            <h4 className="text-darkTextPrimary font-semibold">18 / 50</h4>
+            <h4 className="text-darkTextPrimary font-semibold">{`${numberOfSubscribedLinks} / 50`}</h4>
           </div>
 
           <h4 className=" text-darkTextPrimary font-semibold mt-10 flex flex-row gap-4">
@@ -71,7 +135,7 @@ function Dashboard() {
 
           <div className="w-full py-1 mt-10 grid grid-cols-5">
             <h1 className="col-span-1 flex justify-center items-center text-3xl font-bold text-white">
-              18
+              {posts? numberOfSubscribedLinks : '.....'}
             </h1>
             <span className="col-span-1 flex justify-center items-center text-4xl font-bold  text-emerald-600">
               <HiTrendingUp />
@@ -79,7 +143,7 @@ function Dashboard() {
             <div className="flex flex-col gap-1 col-span-3">
               <h2 className="text-emerald-600 font-semibold">+ 12.54 % </h2>
               <h2 className=" text-darkTextPrimary font-semibold">
-                From last 3 days{" "}
+                From last 3 days
               </h2>
             </div>
           </div>
@@ -102,20 +166,20 @@ function Dashboard() {
           <div className="w-full bg-darkPrimary rounded-full h-3 mt-10">
             <div
               className=" bg-pinkPrimary h-3 rounded-full"
-              style={{ width: "2.27%" }}
+              style={{ width: `${(numberOfSubscribedLinks/posts?.length)* 100}%` }}
             ></div>
           </div>
 
           <div className="w-full mt-5 flex flex-row justify-between">
             <h4 className=" text-darkTextPrimary font-semibold">
-              2.7% completed
+              {`${(numberOfSubscribedLinks/posts?.length)* 100}% completed`}
             </h4>
-            <h4 className="text-darkTextPrimary font-semibold">18 / 790</h4>
+            <h4 className="text-darkTextPrimary font-semibold">{`${numberOfSubscribedLinks} / ${posts?.length}`}</h4>
           </div>
 
           <h4 className=" text-darkTextPrimary font-semibold mt-10 flex flex-row gap-4">
             <span className=" text-pinkPrimary">Total links submitted:</span>
-            <span>790</span>
+            <span>{posts?.length}</span>
           </h4>
         </div>
       </div>
@@ -125,7 +189,7 @@ function Dashboard() {
       </h2>
 
       <Construction message=' Oops! This content is under construction' />
-  
+  <ToastContainer />
     </div>
   );
 }

@@ -21,7 +21,7 @@ function Portal() {
   const [isValid, setValid] = useState(false);
   const [link, setLink] =useState('')
   const [youtubeName, setYoutubeName] =useState('')
-  const [links, setLinks] = useState([])
+  const [links, setLinks] = useState(null)
   const [loading, setLoading] = useState(false);
 let content;
   const handleLinkChange = (event) => {
@@ -59,6 +59,50 @@ let content;
     )
   }
  
+  const fetchPosts = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(
+        "http://localhost:4000/links/user/647a7816d64dc3426f846ec6"
+      );
+      if (res.status === 200) {
+        setLinks(res?.data?.data);
+        setLoading(false);
+       
+      } else {
+        toast.error(`${res.response.data.message}`, {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      let errorMessage;
+      if (error?.response) {
+        errorMessage = error?.response?.data?.message;
+      } else {
+        errorMessage = error?.message;
+      }
+      toast.error(errorMessage, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+  };
+
 
   const AddLink = async () => {
     const YouTubelink = {
@@ -86,9 +130,9 @@ let content;
         });
         setLoading(false);
         setShowModal(false)
-        setLinks((previous)=>[...previous,link]);
         setLink('')
         setYoutubeName('')
+        fetchPosts()
 
       } else {
         toast.error(`${res.response.data.message}`, {
@@ -125,49 +169,6 @@ let content;
   };
   
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setLoading(true);
-        const res = await axios.get(
-          "http://localhost:4000/links/user/647a7816d64dc3426f846ec6"
-        );
-        console.log(res)
-        if (res.status === 200) {
-          setLinks(res?.data?.data);
-          setLoading(false);
-        } else {
-          toast.error(`${res.response.data.message}`, {
-            position: "top-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "dark",
-          });
-          setLoading(false);
-        }
-      } catch (error) {
-        setLoading(false);
-        let errorMessage;
-        if (error?.response) {
-          errorMessage = error?.response?.data?.message;
-        } else {
-          errorMessage = error?.message;
-        }
-        toast.error(errorMessage, {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "dark",
-        });
-      }
-    };
 
     fetchPosts();
   }, []);
@@ -187,7 +188,23 @@ let content;
           <span>Link activities</span> <HiChevronRight />
         </h2>
         <div className="w-1/2 flex justify-end">
-          <button className="py-2 px-4 bg-pinkPrimary rounded-md font-bold text-white flex flex-row gap-1 items-center"  onClick={() => setShowModal(true)}>
+          <button className="py-2 px-4 bg-pinkPrimary rounded-md font-bold text-white flex flex-row gap-1 items-center"  
+          onClick={() => {
+            if(links && links?.length > 0){
+              toast.error(`Sorry you can only submit one link at level 0. 😃😃`, {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+              });
+            }else{
+              setShowModal(true)
+            }
+            }}>
             <span className="text-3xl">
               <HiPlusSm />
             </span>
@@ -214,19 +231,18 @@ let content;
           <div className="w-full bg-darkPrimary rounded-full h-3 mt-10">
             <div
               className=" bg-pinkPrimary h-3 rounded-full"
-              style={{ width: "100%" }}
+              style={{ width: `${(links?.length/1) * 100}%` }}
             ></div>
           </div>
 
           <div className="w-full mt-5 flex flex-row justify-between">
             <h4 className=" text-darkTextPrimary font-semibold">
-              0 links remaining
+             { `${links? `${(1 - links?.length)} links remaining` : '.......'} `}
             </h4>
-            <h4 className="text-darkTextPrimary font-semibold">1 / 1</h4>
+            <h4 className="text-darkTextPrimary font-semibold">{`${links?.length | 0} / 1`}</h4>
           </div>
 
           <h4 className=" text-darkTextPrimary font-semibold mt-10 flex flex-row gap-4">
-            <span className=" text-pinkPrimary hidden md:block">Status:</span>
             <span>Level 0 (Upgrade for more space) </span>
           </h4>
         </div>
