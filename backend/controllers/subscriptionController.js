@@ -124,7 +124,7 @@ const userDashboardLinks = async (req, res) => {
 
   const foundUser = await UserModel.findById(userId);
   if (!foundUser) {
-    res
+   return res
       .status(400)
       .json({ message: "The user doesn't exist ", isSuccess: false });
   }
@@ -162,14 +162,12 @@ const userDashboardLinks = async (req, res) => {
          youtubeName: submittedLink.youtubeName,
          youtubeURL: submittedLink.youtubeURL,
          isSubscriber: isSubscriber,
-         
+         time: submittedLink.createdAt
        };
      })
    );
 
- return res
-    .status(200)
-    .json({
+ return res.status(200).json({
       data: {
         links: linksWithSubscriptionProperty,
         totalLinks,

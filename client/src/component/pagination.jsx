@@ -1,6 +1,6 @@
 import React from "react";
 
-const Pagination = ({ postsPerPage, totalPosts, paginate, handleScroll }) => {
+const Pagination = ({ postsPerPage, totalPosts, paginate, handleScroll, currentPage }) => {
   const pageNumbers = [];
 
   for (let i = 1; i <= Math.ceil(totalPosts / postsPerPage); i++) {
@@ -9,16 +9,15 @@ const Pagination = ({ postsPerPage, totalPosts, paginate, handleScroll }) => {
 
   return (
     <nav>
-      <ul className="inline-flex -space-x-px">
+      <ul className="inline-flex items-center -space-x-px mt-4">
         {pageNumbers.map((number) => (
-          <li key={number} className="page-item">
+          <li key={number}>
             <button
               onClick={() => {
                 handleScroll(number);
                 paginate(number);
               }}
-              className="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white
-      "
+              className={`px-3 py-2 leading-tight ${currentPage === number? 'bg-gray-700' : 'bg-gray-800 '}   border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white `}
             >
               {number}
             </button>
