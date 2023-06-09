@@ -22,7 +22,7 @@ app.get("/", (req, res)=>{
     res.json({message: 'welcome to app'})
 })
 
-app.use('/users', usersRoutes)
+app.use('/user', usersRoutes)
 app.use('/links', linksRoutes)
 app.use('/subscriptions', subscriptionsRoutes)
 

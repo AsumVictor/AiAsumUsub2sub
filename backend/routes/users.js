@@ -1,14 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const {
-  getAllUsers,
-  getUser,
-  addNewUser,
+  login,
+  signup,
 } = require("../controllers/userController");
 
-router.get("/", getAllUsers);
+router.post("/auth", login);
 
-router.post("/", addNewUser);
+router.post("/register", signup);
 
 router.patch("/", (req, res) => {
   res.json({ message: "update a user" });
@@ -17,7 +16,5 @@ router.patch("/", (req, res) => {
 router.delete("/", (req, res) => {
   res.json({ message: "delete a user" });
 });
-
-router.get("/:id", getUser);
 
 module.exports = router;

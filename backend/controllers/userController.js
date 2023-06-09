@@ -1,45 +1,57 @@
 const UserModel = require("../model/usersModel");
-const mongoose = require("mongoose");
-//Get all users
-const getAllUsers = async (req, res) => {
-  const users = await UserModel.find()
-    .select("-password")
-    .lean()
-    .sort({ createdAt: -1 });
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
-  res.status(200).json({ data: users, isSuccess: true });
-};
+const createToken = (_id) => {
+ return jwt.sign({_id}, process.env.ACCESS_TOKEN, {expiresIn: '3d'})
+ }
 
 //get a specific user
-const getUser = async (req, res) => {
-  const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    res.status(400).json({ message: "The id is not valid", isSuccess: false });
-  }
-  const user = await UserModel.findById(id).select("-password").lean();
-
-  if (!user) {
-    res.status(400).json({ message: "No user found", isSuccess: false });
-  }
-
-  res.status(200).json({ data: user, isSuccess: true });
-};
-//add new user
-const addNewUser = async (req, res) => {
+const login = async (req, res) => {
   const {
-    avatar,
-    firstName,
-    lastName,
     email,
-    country,
-    phone,
-    youtubeURL,
-    youtubeName,
     password,
   } = req.body;
 
-  if (!firstName || !lastName || !email || !country || !password) {
-    res
+  if (!email || !password || email.trim() === '' || password.trim() === '') {
+   return res
+      .status(400)
+      .json({
+        message: "All required filled must be completed!",
+        isSuccess: false,
+      });
+  }
+
+  const user = await UserModel.findOne({email}).lean();
+
+  if (!user) {
+    return res.status(400).json({ message: "Invalid email or password", isSuccess: false });
+  }
+
+  const matchPassword = await bcrypt.compare(password, user.password )
+
+  if(!matchPassword){
+    return res.status(400).json({ message: "Invalid email or password", isSuccess: false });
+  }
+
+  
+const token = createToken(user._id)
+
+return res
+   .status(200)
+   .json({ email, token});
+
+};
+
+//add new user
+const signup = async (req, res) => {
+  const {
+    email,
+    password,
+  } = req.body;
+
+  if (!email || !password || email.trim() === '' || password.trim() === '') {
+   return res
       .status(400)
       .json({
         message: "All required filled must be completed!",
@@ -48,36 +60,35 @@ const addNewUser = async (req, res) => {
   }
 
     const duplicate = await UserModel.findOne({ email }).lean().exec();
+
    if (duplicate) {
      return res
        .status(409)
        .json({ message: "It seems this user aleady exist" });
    }
 
+const salt = await bcrypt.genSalt(10)
+
+const hashedPassword = await bcrypt.hash(password, salt)
+
   let user = await UserModel.create({
-    avatar,
-    firstName,
-    lastName,
     email,
-    country,
-    phone,
-    youtubeURL,
-    youtubeName,
-    password,
+    password: hashedPassword,
   });
 
   if (!user) {
-    res
+   return res
       .status(400)
       .json({ message: "Error occured! try again", isSuccess: false });
   }
 
-  res
+const token = createToken(user._id)
+ return res
     .status(200)
-    .json({ message: "User has been added successfuly", isSuccess: true });
+    .json({ email, token});
 };
 
 //update a user
 //delete a user
 
-module.exports = { getAllUsers, getUser, addNewUser };
+module.exports = { login, signup };
