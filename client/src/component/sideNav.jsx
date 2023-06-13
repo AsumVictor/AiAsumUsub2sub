@@ -9,10 +9,12 @@ import {
   HiShieldCheck,
   HiArrowLeftOnRectangle,
 } from "react-icons/hi2";
+import useLogOut from "../hooks/useLogout";
 
 function SideNav() {
   const normalNavLinkStyle =
     "w-[4rem] h-[3rem] md:w-[10rem] md:border md:border-transparent md:rounded-[10px] grid grid-rows-2 grid-cols-1 md:grid-rows-1 md:grid-cols-3 md:p-2 px-1 md:px-2 md:items-center text-darkTextPrimary hover:text-pinkPrimary md:hover:border-pinkPrimary md:hover:text-darkTextPrimary transition-all";
+const { logout } = useLogOut()
 
   return (
     <div
@@ -112,7 +114,9 @@ function SideNav() {
         <span className="md:col-span-1 flex justify-center md:text-[17px] text-[25px]">
           <HiArrowLeftOnRectangle />
         </span>
-        <span className="md:col-span-2 font-semibold md:text-[17px] text-[11px] flex items-end  justify-center md:justify-start">
+        <span className="md:col-span-2 font-semibold md:text-[17px] text-[11px] flex items-end  justify-center md:justify-start"
+        onClick={()=>logout()}
+        >
           Logout
         </span>
       </button>

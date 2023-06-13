@@ -5,9 +5,10 @@ const {
   addNewSubscription,
   getAllSubscription,
 } = require("../controllers/subscriptionController");
+const requireAuth = require("../middleware/requireAuth");
 
 const router = express.Router();
-
+router.use(requireAuth)
 router.get("/", getAllSubscription);
 
 router.post("/", addNewSubscription);

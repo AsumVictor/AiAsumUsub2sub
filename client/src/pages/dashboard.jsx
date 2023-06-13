@@ -10,12 +10,15 @@ import Construction from '../component/underConstruction'
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-
+import {useAuthContext} from '../hooks/useAuthHooks'
 
 function Dashboard() {
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(false);
+  const {user} = useAuthContext()
   let numberOfSubscribedLinks = 0;
+
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -76,7 +79,7 @@ if(posts){
   return (
     <div className="w-full py-2 mt-10 px-3 md:px-10 pb-20">
       <h1 className="text-[18px] font-semibold text-darkTextPrimary">
-        Hey, Asum!,
+        {`Hey, ${user?.email}!,`}
       </h1>
       <p className="text-3xl font-bold text-white">Dashboard</p>
 

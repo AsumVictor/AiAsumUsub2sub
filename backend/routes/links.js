@@ -4,9 +4,10 @@ const {
   addNewLink,
   getAllLink,
 } = require("../controllers/linkController");
+const requireAuth = require("../middleware/requireAuth");
 
 const router = express.Router();
-
+router.use(requireAuth)
 router.get("/", getAllLink);
 
 router.post("/", addNewLink);

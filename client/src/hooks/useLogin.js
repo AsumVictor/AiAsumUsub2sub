@@ -2,15 +2,15 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthHooks";
 import axios from 'axios'
 
-export const useSignUp = () => {
+export const useLogin = () => {
   const [error, setError] = useState(null);
   const [isloading, setIsloading] = useState(false);
   const { dispatch } = useAuthContext();
   
-  const signUp = async (email, password) => {
+  const login = async (email, password) => {
 try {
     setIsloading(true);
-    const res = await axios.post("http://localhost:4000/user/register", {
+    const res = await axios.post("http://localhost:4000/user/auth", {
       email,
       password,
     });
@@ -34,5 +34,5 @@ try {
 }
   };
 
-  return { signUp, isloading, error, setError };
+  return { login, isloading, error, setError };
 };

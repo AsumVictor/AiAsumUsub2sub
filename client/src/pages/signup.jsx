@@ -1,14 +1,23 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect} from 'react'
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { useSignUp } from '../hooks/useSignUp';
 
-
-function Signup() {
-const [userName, setUserName] = useState('');
+function SignupForm() {
+const [userEmail, setUserEmail] = useState('');
 const [password, setPassword] = useState('');
+const {signUp, error, isloading, setError} = useSignUp()
+const handleFormSubmit = async (e) => {
+  e.preventDefault()
+  await signUp(userEmail, password)
+}
 
 
-    return (
+useEffect(()=>{
+  setError(null)
+},[userEmail, password])
+
+return (
         <div
           className={`w-full h-screen bg-fixed flex flex-col justify-center items-center relative 
            bg-[center_bottom_-17rem] bg-[length:100%_auto] bg-no-repeat bg-[#E5E5E5]`}
@@ -24,11 +33,12 @@ const [password, setPassword] = useState('');
              {` Are you ready to increase the number of your youtube subscribers :) `}
             </p>
             <input
-              type="text"
-              placeholder="Username"
+              type="email"
+              placeholder="Email"
               required={true}
-              value={userName}
-              onChange={(e)=>setUserName(e.target.value)}
+              value={userEmail}
+              disabled={isloading}
+              onChange={(e)=>setUserEmail(e.target.value)}
               className="block pl-4 h-12 text-white placeholder:text-white w-[300px] outline-none rounded-[10px] mt-0 mx-auto border-0 bg-[#093545] placeholder:bg-[#093545]"
             />
             <input
@@ -36,6 +46,7 @@ const [password, setPassword] = useState('');
               placeholder="Password"
               required={true}
               value={password}
+              disabled={isloading}
               onChange={(e)=>setPassword(e.target.value)}
               className="block pl-4 h-12 w-[300px] outline-none rounded-[10px] bg-[#093545] mx-auto border-0 mt-[32px] mb-[23px]"
             />
@@ -43,12 +54,15 @@ const [password, setPassword] = useState('');
        
             <button
           type="submit"
-          disabled={userName.trim() === '' || password.trim() === ''}
+          onClick={handleFormSubmit}
+          disabled={userEmail.trim() === '' || password.trim() === '' || isloading}
           className="block h-12 pl-0 text-base font-normal leading-5 tracking-normal text-center mt-12 bg-pinkPrimary text-black cursor-pointer w-[300px] outline-none rounded-[10px] mx-auto border-0 disabled:bg-pink-200 disabled:cursor-not-allowed"
         >
-          Sign up
+          {isloading? 'Signing up...': 'Sign up'}
         </button>
-          </form>
+         {error && <p className='text-center text-red-700 font-bold mt-1 py-2 px-3 border border-red-700 rounded-md bg-red-200'>{error}</p> }
+         
+                   </form>
           <Link to='../login' className="font-bold mt-5 underline text-darkPrimary">
        I already have an account
       </Link>
@@ -61,4 +75,4 @@ const [password, setPassword] = useState('');
       );
 }
 
-export default Signup
+export default SignupForm

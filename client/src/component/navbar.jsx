@@ -7,6 +7,7 @@ import {
   HiUserCircle,
   HiCog6Tooth,
 } from "react-icons/hi2";
+import useLogOut from "../hooks/useLogout";
 
 function Navbar() {
   const normalNavLinkStyle =
@@ -14,6 +15,7 @@ function Navbar() {
 
   //Show and hide user menu
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const { logout } = useLogOut()
 
   return (
     <header
@@ -91,7 +93,9 @@ function Navbar() {
             <span className="col-span-1 flex text-[17px] justify-center">
               <HiArrowLeftOnRectangle />
             </span>
-            <span className="col-span-2 font-semibold text-[17px] flex justify-start">
+            <span className="col-span-2 font-semibold text-[17px] flex justify-start"
+            onClick={()=>logout()}
+            >
               Logout
             </span>
           </button>

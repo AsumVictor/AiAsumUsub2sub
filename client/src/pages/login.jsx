@@ -1,31 +1,43 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Helmet } from 'react-helmet';
+import { Helmet } from "react-helmet";
+import { useLogin } from "../hooks/useLogin";
 
 function Login() {
-  const [userName, setUserName] = useState('');
-  const [password, setPassword] = useState('');
+  const [userEmail, setUserEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { login, error, isloading, setError } = useLogin();
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    await login(userEmail, password);
+  };
+
+  useEffect(() => {
+    setError(null);
+  }, [userEmail, password]);
 
   return (
     <div
       className={`w-full h-screen bg-fixed flex flex-col justify-center items-center relative bg-[center_bottom_-17rem] bg-[length:100%_auto] bg-no-repeat bg-[#E5E5E5]`}
     >
       <Helmet>
-                <title>AiAsum | Login</title>
-            </Helmet>
-      <form className="w-[347px] h-[406px]">
+        <title>AiAsum | Login</title>
+      </Helmet>
+      <form className="w-[347px] h-[450px]">
         <h2 className="text-[#093545] text-6xl font-normal tracking-normal text-center mb-10">
           Sign in
         </h2>
         <p className="text-[#093545] text-base leading-5 tracking-normal text-center mb-8 font-bold">
-         {` Welcome back :) `}
+          {` Welcome back :) `}
         </p>
         <input
-          type="text"
-          placeholder="Username"
+          type="email"
+          placeholder="Email"
           required={true}
-          value={userName}
-          onChange={(e)=>setUserName(e.target.value)}
+          value={userEmail}
+          disabled={isloading}
+          onChange={(e) => setUserEmail(e.target.value)}
           className="block pl-4 h-12 text-white placeholder:text-white w-[300px] outline-none rounded-[10px] mt-0 mx-auto border-0 bg-[#093545] placeholder:bg-[#093545]"
         />
         <input
@@ -33,7 +45,8 @@ function Login() {
           placeholder="Password"
           required={true}
           value={password}
-              onChange={(e)=>setPassword(e.target.value)}
+          disabled={isloading}
+          onChange={(e) => setPassword(e.target.value)}
           className="block pl-4 h-12 w-[300px] outline-none rounded-[10px] bg-[#093545] mx-auto border-0 mt-[32px] mb-[23px]"
         />
         <label
@@ -55,15 +68,23 @@ function Login() {
         </a>
         <button
           type="submit"
-          disabled={userName.trim() === '' || password.trim() === ''}
+          disabled={
+            userEmail.trim() === "" || password.trim() === "" || isloading
+          }
+          onClick={handleFormSubmit}
           className="block h-12 pl-0 text-base font-normal leading-5 tracking-normal text-center mt-12 bg-pinkPrimary text-black cursor-pointer w-[300px] outline-none rounded-[10px] mx-auto border-0 disabled:bg-pink-200 disabled:cursor-not-allowed"
         >
-          Login
+          {isloading ? "...Loging in" : "Login"}
         </button>
+        {error && <p className='text-center text-red-700 font-bold mt-1 py-2 px-3 border border-red-700 rounded-md bg-red-200'>{error}</p> }
+         
 
       </form>
-      <Link to='../signup' className="font-bold mt-10 underline text-darkPrimary">
-       Create new account
+      <Link
+        to="../signup"
+        className="font-bold mt-10 underline text-darkPrimary"
+      >
+        Create new account
       </Link>
       <button
         type="button"
