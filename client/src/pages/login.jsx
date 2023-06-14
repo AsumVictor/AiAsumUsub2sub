@@ -1,16 +1,45 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import { useLogin } from "../hooks/useLogin";
+import { useAuthContext } from "../hooks/useAuthHooks";
+import axios from "axios";
 
 function Login() {
   const [userEmail, setUserEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login, error, isloading, setError } = useLogin();
+  const [error, setError] = useState(null);
+  const [isloading, setIsloading] = useState(false);
+  const { dispatch } = useAuthContext();
+  const navigate = useNavigate()
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    await login(userEmail, password);
+    try {
+      setIsloading(true);
+      const res = await axios.post("http://localhost:4000/user/auth", {
+        email: userEmail,
+        password,
+      });
+      if (res.status === 200) {
+        setIsloading(false);
+        localStorage.setItem("user", JSON.stringify(res.data));
+        dispatch({ type: "LOGIN", payload: res.data });
+        setUserEmail('')
+        setPassword('')
+        navigate("/dashboard", { replace: true });
+      } else {
+        setError(res.response.data.message);
+        console.log(error);
+        setIsloading(false);
+      }
+    } catch (error) {
+      setIsloading(false);
+      if (error?.response) {
+        setError(error?.response?.data?.message);
+      } else {
+        setError(error?.message);
+      }
+    }
   };
 
   useEffect(() => {
@@ -76,9 +105,11 @@ function Login() {
         >
           {isloading ? "...Loging in" : "Login"}
         </button>
-        {error && <p className='text-center text-red-700 font-bold mt-1 py-2 px-3 border border-red-700 rounded-md bg-red-200'>{error}</p> }
-         
-
+        {error && (
+          <p className="text-center text-red-700 font-bold mt-1 py-2 px-3 border border-red-700 rounded-md bg-red-200">
+            {error}
+          </p>
+        )}
       </form>
       <Link
         to="../signup"
@@ -89,7 +120,7 @@ function Login() {
       <button
         type="button"
         className="w-20 h-20 cursor-pointer p-1 absolute rounded-full bottom-0 left-[36px] bg-[url('https://veb-dasturchi.github.io/img/Dark%20Mode.svg')]"
-        onclick="changeColor()"
+        onClick="changeColor()"
       />
     </div>
   );

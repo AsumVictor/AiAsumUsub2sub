@@ -14,61 +14,68 @@ import axios from "axios";
 import { Helmet } from "react-helmet";
 import NoContent from "../component/NoContent";
 import { format } from "timeago.js";
+import { useAuthContext } from "../hooks/useAuthHooks";
 
 function Portal() {
+  const { user } = useAuthContext();
   const [showModal, setShowModal] = useState(false);
-  const [url, setURL] = useState('');
+  const [url, setURL] = useState("");
   const [isValid, setValid] = useState(false);
-  const [link, setLink] =useState('')
-  const [youtubeName, setYoutubeName] =useState('')
-  const [links, setLinks] = useState(null)
+  const [link, setLink] = useState("");
+  const [youtubeName, setYoutubeName] = useState("");
+  const [links, setLinks] = useState(null);
   const [loading, setLoading] = useState(false);
-let content;
+  let content;
   const handleLinkChange = (event) => {
     const enteredURL = event.target.value;
-    setLink(enteredURL)
+    setLink(enteredURL);
     const pattern = /https:\/\/www\.youtube\.com\/channel\/[A-Za-z0-9_-]+/;
     const isValidURL = pattern.test(enteredURL);
     setURL(enteredURL);
     setValid(isValidURL);
   };
 
-
-  if(links?.length > 0){
+  if (links?.length > 0) {
     content = (
       <div className="w-full flex flex-col gap-5 py-3 mt-10">
-        {links.map((link,index)=>(
-
-      <div key={link._id} className="grid grid-cols-10 bg-darkSecondary rounded-xl w-full md:w-[40rem] items-center gap-2 px-2 py-2">
-        <span className="col-span-1 w-[2rem] h-[2rem] rounded-full bg-pinkPrimary text-white flex justify-center items-center font-bold">
-          {index + 1}
-        </span>
-        <h4 className=" col-span-7 text-white font-semibold">
-          {link.youtubeName}
-        </h4>
-        <h4 className="col-span-2 text-[12px] font-bold text-darkTextPrimary">
-          {format(link.createdAt)}
-        </h4>
-      </div>
+        {links.map((link, index) => (
+          <div
+            key={link._id}
+            className="grid grid-cols-10 bg-darkSecondary rounded-xl w-full md:w-[40rem] items-center gap-2 px-2 py-2"
+          >
+            <span className="col-span-1 w-[2rem] h-[2rem] rounded-full bg-pinkPrimary text-white flex justify-center items-center font-bold">
+              {index + 1}
+            </span>
+            <h4 className=" col-span-7 text-white font-semibold">
+              {link.youtubeName}
+            </h4>
+            <h4 className="col-span-2 text-[12px] font-bold text-darkTextPrimary">
+              {format(link.createdAt)}
+            </h4>
+          </div>
         ))}
-    </div>
-    )
-  }else {
-    content =(
-     < NoContent customClass={'w-[15rem]'}message={'Oops! you have no link'} />
-    )
+      </div>
+    );
+  } else {
+    content = (
+      <NoContent customClass={"w-[15rem]"} message={"Oops! you have no link"} />
+    );
   }
- 
+
   const fetchPosts = async () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        "http://localhost:4000/links/user/647a7816d64dc3426f846ec6"
+        "http://localhost:4000/links/user/647a7816d64dc3426f846ec6",
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
       );
       if (res.status === 200) {
         setLinks(res?.data?.data);
         setLoading(false);
-       
       } else {
         toast.error(`${res.response.data.message}`, {
           position: "top-center",
@@ -103,7 +110,6 @@ let content;
     }
   };
 
-
   const AddLink = async () => {
     const YouTubelink = {
       youtubeURL: link,
@@ -113,10 +119,17 @@ let content;
 
     try {
       setLoading(true);
-      const res = await axios.post(
-        "http://localhost:4000/links",
-        YouTubelink
-      );
+      const res = await axios({
+        method: "post",
+        url: "http://localhost:4000/links",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
+        },
+        data: {
+          YouTubelink,
+        },
+      });
       if (res.status === 200) {
         toast.success(`${res?.data?.message}`, {
           position: "top-center",
@@ -129,11 +142,10 @@ let content;
           theme: "dark",
         });
         setLoading(false);
-        setShowModal(false)
-        setLink('')
-        setYoutubeName('')
-        fetchPosts()
-
+        setShowModal(false);
+        setLink("");
+        setYoutubeName("");
+        fetchPosts();
       } else {
         toast.error(`${res.response.data.message}`, {
           position: "top-center",
@@ -167,15 +179,16 @@ let content;
       });
     }
   };
-  
-  useEffect(() => {
 
-    fetchPosts();
+  useEffect(() => {
+    if (user) {
+      fetchPosts();
+    }
   }, []);
 
   return (
     <div className="w-full py-2 mt-10 px-3 md:px-10 pb-20">
-        <Helmet>
+      <Helmet>
         <title>My portal</title>
       </Helmet>
       <h1 className="text-[18px] font-semibold text-darkTextPrimary">
@@ -188,23 +201,28 @@ let content;
           <span>Link activities</span> <HiChevronRight />
         </h2>
         <div className="w-1/2 flex justify-end">
-          <button className="py-2 px-4 bg-pinkPrimary rounded-md font-bold text-white flex flex-row gap-1 items-center"  
-          onClick={() => {
-            if(links && links?.length > 0){
-              toast.error(`Sorry you can only submit one link at level 0. 😃😃`, {
-                position: "top-center",
-                autoClose: 5000,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-              });
-            }else{
-              setShowModal(true)
-            }
-            }}>
+          <button
+            className="py-2 px-4 bg-pinkPrimary rounded-md font-bold text-white flex flex-row gap-1 items-center"
+            onClick={() => {
+              if (links && links?.length > 0) {
+                toast.error(
+                  `Sorry you can only submit one link at level 0. 😃😃`,
+                  {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                  }
+                );
+              } else {
+                setShowModal(true);
+              }
+            }}
+          >
             <span className="text-3xl">
               <HiPlusSm />
             </span>
@@ -231,15 +249,17 @@ let content;
           <div className="w-full bg-darkPrimary rounded-full h-3 mt-10">
             <div
               className=" bg-pinkPrimary h-3 rounded-full"
-              style={{ width: `${(links?.length/1) * 100}%` }}
+              style={{ width: `${(links?.length / 1) * 100}%` }}
             ></div>
           </div>
 
           <div className="w-full mt-5 flex flex-row justify-between">
             <h4 className=" text-darkTextPrimary font-semibold">
-             { `${links? `${(1 - links?.length)} links remaining` : '.......'} `}
+              {`${links ? `${1 - links?.length} links remaining` : "......."} `}
             </h4>
-            <h4 className="text-darkTextPrimary font-semibold">{`${links?.length | 0} / 1`}</h4>
+            <h4 className="text-darkTextPrimary font-semibold">{`${
+              links?.length | 0
+            } / 1`}</h4>
           </div>
 
           <h4 className=" text-darkTextPrimary font-semibold mt-10 flex flex-row gap-4">
@@ -252,7 +272,7 @@ let content;
         <span>All my youtube links</span> <HiChevronRight />
       </h2>
 
-     {content}
+      {content}
 
       {showModal && (
         <ModalBox
@@ -265,8 +285,16 @@ let content;
               >
                 CANCEL
               </button>
-              <button className="py-1 bg-emerald-600 font-bold px-3 rounded-md text-white  disabled:bg-slate-400 disabled:cursor-not-allowed" onClick={()=>AddLink()} disabled={link.trim().length ===0 || youtubeName.trim().length ===0 || !isValid}>
-                {loading? 'Adding...': 'Add link'}
+              <button
+                className="py-1 bg-emerald-600 font-bold px-3 rounded-md text-white  disabled:bg-slate-400 disabled:cursor-not-allowed"
+                onClick={() => AddLink()}
+                disabled={
+                  link.trim().length === 0 ||
+                  youtubeName.trim().length === 0 ||
+                  !isValid
+                }
+              >
+                {loading ? "Adding..." : "Add link"}
               </button>
             </ModalFooter>
           }
@@ -279,20 +307,24 @@ let content;
               type="text"
               name="youtubeName"
               placeholder="AiAsum Sub2Sub"
-              onChange={(e)=>setYoutubeName(e.target.value)}
+              onChange={(e) => setYoutubeName(e.target.value)}
               className="w-full mt-1 h-[2rem] rounded-md outline-0 border-2 bg-darkSecondary border-darkTextPrimary text-darkTextPrimary px-2 font-semibold placeholder-darkTertiary"
             />
-             <p className="font-semibold text-darkTextPrimary mt-4">
+            <p className="font-semibold text-darkTextPrimary mt-4">
               * Link to youtube channel
             </p>
             <input
               type="text"
               name="youtubeLink"
-              onChange={(event)=>handleLinkChange(event)}
+              onChange={(event) => handleLinkChange(event)}
               placeholder="https://www.youtube.com/channel/UCiUNFyQ6F-6XfleCjnXJanA"
               className="w-full mt-1 h-[2rem] rounded-md outline-0 border-2 bg-darkSecondary border-darkTextPrimary text-darkTextPrimary px-2 font-semibold placeholder-darkTertiary placeholder:text-[14px]"
             />
-             {(!isValid && link ) ? <p className="text-red-600 font-semibold">* URL is invalid.</p> : ''}
+            {!isValid && link ? (
+              <p className="text-red-600 font-semibold">* URL is invalid.</p>
+            ) : (
+              ""
+            )}
           </div>
         </ModalBox>
       )}

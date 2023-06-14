@@ -19,6 +19,10 @@ import Premium from "./pages/premium";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
 //ROUTES
+
+//AUth
+import RequireAuth from "./auth/requireAuth";
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
@@ -26,12 +30,14 @@ const router = createBrowserRouter(
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="*" element={<h1>Error Page</h1>} />
-      <Route element={<UserPortal />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/portal" element={<Portal />} />
-        <Route path="/tasks" element={<Task />} />
-        <Route path="/subscription" element={<Subscriptions />} />
-        <Route path="/premium" element={<Premium />} />
+      <Route element={<RequireAuth />}>
+        <Route element={<UserPortal />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/portal" element={<Portal />} />
+          <Route path="/tasks" element={<Task />} />
+          <Route path="/subscription" element={<Subscriptions />} />
+          <Route path="/premium" element={<Premium />} />
+        </Route>
       </Route>
     </Route>
   )

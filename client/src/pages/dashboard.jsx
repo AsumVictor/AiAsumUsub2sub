@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { HiChevronRight, HiSquare3Stack3D } from "react-icons/hi2";
 import {
   HiViewGrid,
@@ -6,26 +6,33 @@ import {
   HiTrendingUp,
   HiChartBar,
 } from "react-icons/hi";
-import Construction from '../component/underConstruction'
+import Construction from "../component/underConstruction";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import {useAuthContext} from '../hooks/useAuthHooks'
+import { useAuthContext } from "../hooks/useAuthHooks";
 
 function Dashboard() {
   const [posts, setPosts] = useState(null);
   const [loading, setLoading] = useState(false);
-  const {user} = useAuthContext()
+  const { user } = useAuthContext();
   let numberOfSubscribedLinks = 0;
-
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         setLoading(true);
         const res = await axios.get(
-          "http://localhost:4000/subscriptions/sub/647a7816d64dc3426f846ec6"
+          "http://localhost:4000/subscriptions/sub",
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+            },
+          }
         );
+
+        console.log(res)
+
         if (res.status === 200) {
           setPosts(res.data.data.links);
           setLoading(false);
@@ -62,19 +69,20 @@ function Dashboard() {
         });
       }
     };
-    fetchPosts();
+    if (user) {
+      fetchPosts();
+    }
   }, []);
 
-if(posts){
-  for (let i = 0; i < posts.length; i++) {
-     if(posts[i].isSubscriber){
-      numberOfSubscribedLinks += 1
-     }else{
-      numberOfSubscribedLinks = 0
-     }
-    
+  if (posts) {
+    for (let i = 0; i < posts.length; i++) {
+      if (posts[i].isSubscriber) {
+        numberOfSubscribedLinks += 1;
+      } else {
+        numberOfSubscribedLinks = 0;
+      }
+    }
   }
-}
   // Check number od subscribed links
   return (
     <div className="w-full py-2 mt-10 px-3 md:px-10 pb-20">
@@ -105,13 +113,13 @@ if(posts){
           <div className="w-full bg-darkPrimary rounded-full h-3 mt-10">
             <div
               className=" bg-pinkPrimary h-3 rounded-full"
-              style={{ width: `${(numberOfSubscribedLinks/50)* 100}%` }}
+              style={{ width: `${(numberOfSubscribedLinks / 50) * 100}%` }}
             ></div>
           </div>
 
           <div className="w-full mt-5 flex flex-row justify-between">
             <h4 className=" text-darkTextPrimary font-semibold">
-              {`${(numberOfSubscribedLinks/50)* 100}% completed`}
+              {`${(numberOfSubscribedLinks / 50) * 100}% completed`}
             </h4>
             <h4 className="text-darkTextPrimary font-semibold">{`${numberOfSubscribedLinks} / 50`}</h4>
           </div>
@@ -138,7 +146,7 @@ if(posts){
 
           <div className="w-full py-1 mt-10 grid grid-cols-5">
             <h1 className="col-span-1 flex justify-center items-center text-3xl font-bold text-white">
-              {posts? numberOfSubscribedLinks : '.....'}
+              {posts ? numberOfSubscribedLinks : "....."}
             </h1>
             <span className="col-span-1 flex justify-center items-center text-4xl font-bold  text-emerald-600">
               <HiTrendingUp />
@@ -169,13 +177,15 @@ if(posts){
           <div className="w-full bg-darkPrimary rounded-full h-3 mt-10">
             <div
               className=" bg-pinkPrimary h-3 rounded-full"
-              style={{ width: `${(numberOfSubscribedLinks/posts?.length)* 100}%` }}
+              style={{
+                width: `${(numberOfSubscribedLinks / posts?.length) * 100}%`,
+              }}
             ></div>
           </div>
 
           <div className="w-full mt-5 flex flex-row justify-between">
             <h4 className=" text-darkTextPrimary font-semibold">
-              {`${(numberOfSubscribedLinks/posts?.length)* 100}% completed`}
+              {`${(numberOfSubscribedLinks / posts?.length) * 100}% completed`}
             </h4>
             <h4 className="text-darkTextPrimary font-semibold">{`${numberOfSubscribedLinks} / ${posts?.length}`}</h4>
           </div>
@@ -191,8 +201,8 @@ if(posts){
         <span>My activity</span> <HiChevronRight />
       </h2>
 
-      <Construction message=' Oops! This content is under construction' />
-  <ToastContainer />
+      <Construction message=" Oops! This content is under construction" />
+      <ToastContainer />
     </div>
   );
 }

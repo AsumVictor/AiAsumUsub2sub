@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Navigate } from "react";
 import { useAuthContext } from "./useAuthHooks";
 import axios from 'axios'
 
@@ -18,6 +18,7 @@ try {
       setIsloading(false);
       localStorage.setItem("user", JSON.stringify(res.data));
       dispatch({ type: "LOGIN", payload: res.data });
+      <Navigate to='./dashboard' />
     } else {
       setError(res.response.data.message);
       console.log(error)

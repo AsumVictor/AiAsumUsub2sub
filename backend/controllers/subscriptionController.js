@@ -105,8 +105,9 @@ const getUserSubscription = async (req, res) => {
 // Get subscription to dashboard
 
 const userDashboardLinks = async (req, res) => {
-  const { userId } = req.params;
+   const { _id } = req.user._id;
 
+  const userId =   _id.toString() 
   if (!userId) {
     return res.status(400).json({
       message: "All required fills must be completed",
@@ -123,17 +124,10 @@ const userDashboardLinks = async (req, res) => {
   }
 
   const foundUser = await UserModel.findById(userId);
-  if (!foundUser) {
-   return res
-      .status(400)
-      .json({ message: "The user doesn't exist ", isSuccess: false });
-  }
 
-  //get all submitted links @
-  // get all subscription links by user @
-  // let an linkArray = subscription by user linkId @
-  // loop through all submitted links if linkArray includes a submitted link
-  // add isSubscriber: true else isSubscriber: false
+  if (!foundUser) {
+    return res.status(400).json({ message: "The user doesn't exist ", isSuccess: false });
+  }
 
   const allSubmittedLinks = await linksModel.find().sort({createdAt: -1});
   const linksSubscribedByUser = await subscriptionModel.find({user: userId});
@@ -154,8 +148,6 @@ const userDashboardLinks = async (req, res) => {
          isSubscriber = false;
        }
 
-
-
        return {
          id: submittedLink._id,
          user: submittedLink.user,
@@ -167,11 +159,13 @@ const userDashboardLinks = async (req, res) => {
      })
    );
 
+
+
  return res.status(200).json({
       data: {
         links: linksWithSubscriptionProperty,
         totalLinks,
-         TotalLinksSubscribeByUser,
+        TotalLinksSubscribeByUser,
       },
       isSuccess: true,
     });

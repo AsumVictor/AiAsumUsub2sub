@@ -4,7 +4,8 @@ import { useAuthContext } from "./useAuthHooks"
     const {dispatch} = useAuthContext()
     const logout = () => {
         localStorage.removeItem("user")
-        dispatch({user: null})
+        dispatch({type: 'LOGOUT'})
+        
     }
 
     return {logout}

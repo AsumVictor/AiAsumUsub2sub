@@ -7,8 +7,10 @@ import { HiChevronRight } from "react-icons/hi2";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuthContext } from "../hooks/useAuthHooks";
 
 const Task = () => {
+  const { user } = useAuthContext();
   let [searchParams, setSearchParams] = useSearchParams();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -21,7 +23,12 @@ const Task = () => {
       try {
         setLoading(true);
         const res = await axios.get(
-          "http://localhost:4000/subscriptions/sub/647a7816d64dc3426f846ec6"
+          "http://localhost:4000/subscriptions/sub/647a7816d64dc3426f846ec6",{
+            headers: {
+              'Authorization': `Bearer ${user.token}`,
+              'Content-Type': 'application/json'
+            }
+          }
         );
         if (res.status === 200) {
           setPosts(res.data.data.links);
@@ -60,7 +67,9 @@ const Task = () => {
       }
     };
 
-    fetchPosts();
+    if (user) {
+      fetchPosts();
+    }
   }, []);
 
   const subscribeToChannel = async (index, youtubeId, userId) => {
