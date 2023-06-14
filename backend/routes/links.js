@@ -4,9 +4,10 @@ const {
   addNewLink,
   getAllLink,
 } = require("../controllers/linkController");
+const requireAuth = require("../middleware/requireAuth");
 
 const router = express.Router();
-
+router.use(requireAuth)
 router.get("/", getAllLink);
 
 router.post("/", addNewLink);
@@ -18,6 +19,6 @@ router.patch("/", (req, res) => {
 router.delete("/", (req, res) => {
   res.json({ message: "Delete a link" });
 });
-router.get("/user/:userId", getUserLinks);
+router.get("/user", getUserLinks);
 
 module.exports = router;

@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend+Deca&family=Montserrat:wght@500&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Lexend Deca', sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.3s;
+}
+
+:root {
+    --light_bg: #E5E5E5;
+    --dark_bg: #093545;
+}
+
+.container {
+    width: 100%;
+    height: 100vh;
+    background: var(--light_bg) url("../img/Vectors_light.svg") no-repeat bottom;
+    background-size: 100% auto;
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background-color: red;
+}
+
+button {
+    width: 80px;
+    height: 80px;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    background: url("../img/Dark\ Mode.svg") no-repeat;
+    /* background-size: 100% 100%; */
+    position: absolute;
+    bottom: 20px;
+    left: 36px;
+}
+
+.form {
+    width: 347px;
+    height: 406px;
+    /* border: 1px solid #ccc; */
+}
+
+h2 {
+    font-family: Lexend Deca;
+    font-size: 64px;
+    font-weight: 400;
+    line-height: 80px;
+    letter-spacing: 0px;
+    text-align: center;
+    margin-bottom: 39px;
+    color: var(--dark_bg)
+}
+
+p {
+    font-family: Lexend Deca;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0px;
+    text-align: center;
+    color: var(--dark_bg);
+    margin-bottom: 36px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="submit"] {
+    width: 300px;
+    margin: 0 auto;
+    display: block;
+    border: none;
+    border-radius: 10px;
+    padding-left: 18px;
+    height: 45px;
+    /* border: ; */
+    outline: none;
+}
+
+label {
+    margin: 0 0 0 35px;
+    font-family: Montserrat;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 17px;
+    letter-spacing: 0px;
+    text-align: left;
+    cursor: pointer;
+    color: var(--dark_bg);
+}
+
+input[type=checkbox] {
+    position: relative;
+    cursor: pointer;
+    left: -10px;
+    top: -2px;
+}
+
+input[type=checkbox]:before {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 0;
+    left: 0;
+    border: 2px solid rgba(0, 0, 0, 0);
+    border-radius: 3px;
+    background-color: #224957;
+}
+
+input[type=checkbox]:checked:after {
+    content: "";
+    display: block;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    position: absolute;
+    top: 2px;
+    left: 6px;
+}
+
+a {
+    font-family: Montserrat;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 17px;
+    letter-spacing: 0px;
+    text-align: right;
+    text-decoration: none;
+    color: #000000;
+    margin-left: 32px;
+}
+
+input[type="password"] {
+    margin: 32px auto 23px;
+}
+
+input[type="text"],
+input[type="password"],
+ ::placeholder {
+    background: var(--dark_bg);
+    color: #fff;
+}
+
+input[type="submit"] {
+    padding-left: 0px;
+    font-family: Lexend Deca;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0px;
+    text-align: center;
+    margin-top: 24px;
+    background-color: #20DF7F;
+    color: #000;
+    cursor: pointer;
+}
+
+
+/* Dark Class */
+
+.container_dark {
+    width: 100%;
+    height: 100vh;
+    background: var(--dark_bg) url("../img/Vectors_dark.svg") no-repeat bottom;
+    background-size: 100% auto;
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.container_dark input.dark {
+    background: #224957;
+    color: #fff;
+}
+
+.container_dark input[type="text"],
+.container_dark input[type="password"],
+.container_dark ::placeholder {
+    background: #224957;
+    color: #fff;
+}
+
+.container_dark label.dark_lab {
+    color: #FFFFFF !important;
+}
+
+.container_dark a.dark_link {
+    color: #20DF7F;
+}
+
+.container_dark h2.dark_title,
+.container_dark p.dark_desc {
+    color: #fff;
+}

@@ -5,18 +5,24 @@ const app = express()
 const usersRoutes = require("./routes/users")
 const linksRoutes = require("./routes/links")
 const subscriptionsRoutes = require("./routes/subscription")
+const cors = require("cors");
+const corOptions = require("./config/corsOptions");
 
 app.use(express.json())
+
+
 app.use((req,res,next)=>{
     console.log(req.method, req.path)
     next()
 })
 
+app.use(cors(corOptions));
+
 app.get("/", (req, res)=>{
     res.json({message: 'welcome to app'})
 })
 
-app.use('/users', usersRoutes)
+app.use('/user', usersRoutes)
 app.use('/links', linksRoutes)
 app.use('/subscriptions', subscriptionsRoutes)
 

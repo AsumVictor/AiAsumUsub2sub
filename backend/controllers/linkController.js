@@ -10,7 +10,9 @@ const getAllLink = async (req, res) => {
 
 //add new link
 const addNewLink = async (req, res) => {
-  const { youtubeURL, youtubeName, user } = req.body;
+  const { youtubeURL, youtubeName } = req.body;
+  const { _id } = req.user._id;
+  const user =   _id.toString() 
   if (!youtubeURL || !youtubeName || !user) {
    return res
       .status(400)
@@ -57,11 +59,12 @@ const addNewLink = async (req, res) => {
    return res.status(200)
      .json({ message: "You have submitted your link", isSuccess: true });
 };
-//updateLink
-//deleteLink
-//getUserLinks
+
+
 const getUserLinks = async (req, res) => {
-    const {userId} = req.params;
+  const { _id } = req.user._id;
+
+  const userId =   _id.toString() 
     if (!userId) {
        return res
           .status(400)
