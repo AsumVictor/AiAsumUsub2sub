@@ -8,28 +8,34 @@ import { useOutletContext, useSearchParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuthContext } from "../hooks/useAuthHooks";
+import NoContent from "../component/NoContent";
 
 const Task = () => {
   const { user } = useAuthContext();
   let [searchParams, setSearchParams] = useSearchParams();
-  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(searchParams.get("page") | 1);
   const [postsPerPage] = useState(12);
   const scrollTop = useOutletContext();
+  let content;
+  
+  if(loading){
+    content = (
+      <p className="text-white text-2xl">LOADING...</p>
+    )
+  }
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(
-          "http://localhost:4000/subscriptions/sub/647a7816d64dc3426f846ec6",{
-            headers: {
-              'Authorization': `Bearer ${user.token}`,
-              'Content-Type': 'application/json'
-            }
-          }
-        );
+        const res = await axios.get("http://localhost:4000/subscriptions/sub", {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json",
+          },
+        });
         if (res.status === 200) {
           setPosts(res.data.data.links);
           setLoading(false);
@@ -72,21 +78,29 @@ const Task = () => {
     }
   }, []);
 
-  const subscribeToChannel = async (index, youtubeId, userId) => {
+  const subscribeToChannel = async (index, youtubeId) => {
     const subscription = {
       youtubeID: youtubeId,
-      user: userId,
     };
 
     let allLinks = [...posts];
 
     try {
       setLoading(true);
-      const res = await axios.post(
-        "http://localhost:4000/subscriptions",
-        subscription
+      const res = await axios(
+        {
+          method: "post",
+          url: "http://localhost:4000/subscriptions",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json",
+          },
+          data: {
+            ...subscription,
+          },
+        }
       );
-      console.log(res);
+      
       if (res.status === 200) {
         toast.success(`${res?.data?.message}`, {
           position: "top-center",
@@ -152,6 +166,35 @@ const Task = () => {
     scrollTop();
   };
 
+
+
+  if (posts?.length > 0) {
+    content = (
+      <>
+        <Posts
+          posts={currentPosts}
+          loading={loading}
+          pageNumber={currentPage}
+          handleSubscribe={subscribeToChannel}
+        />
+
+        <Pagination
+          postsPerPage={postsPerPage}
+          totalPosts={posts.length}
+          paginate={paginate}
+          handleScroll={handlePageParams}
+          currentPage={currentPage}
+        />
+      </>
+    );
+  }
+  
+   if(!loading && posts?.length === 0)  {
+     content = (
+       <NoContent customClass={"w-[15rem]"} message={"Oops! there is no submitted links"} />
+     );
+   }
+
   return (
     <div className=" w-full py-2 mt-10 px-3 md:px-10 pb-20">
       <Helmet>
@@ -167,20 +210,7 @@ const Task = () => {
         <span>All submitted links</span> <HiChevronRight />
       </h2>
 
-      <Posts
-        posts={currentPosts}
-        loading={loading}
-        pageNumber={currentPage}
-        handleSubscribe={subscribeToChannel}
-      />
-
-      <Pagination
-        postsPerPage={postsPerPage}
-        totalPosts={posts.length}
-        paginate={paginate}
-        handleScroll={handlePageParams}
-        currentPage={currentPage}
-      />
+      {content}
 
       {/* Notification */}
       <ToastContainer />

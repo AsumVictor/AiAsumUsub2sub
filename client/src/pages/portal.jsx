@@ -66,8 +66,7 @@ function Portal() {
     try {
       setLoading(true);
       const res = await axios.get(
-        "http://localhost:4000/links/user/647a7816d64dc3426f846ec6",
-        {
+        "http://localhost:4000/links/user", {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -114,7 +113,6 @@ function Portal() {
     const YouTubelink = {
       youtubeURL: link,
       youtubeName,
-      user: "647a7816d64dc3426f846ec6",
     };
 
     try {
@@ -127,7 +125,7 @@ function Portal() {
           "Content-Type": "application/json",
         },
         data: {
-          YouTubelink,
+          ...YouTubelink,
         },
       });
       if (res.status === 200) {
@@ -202,7 +200,8 @@ function Portal() {
         </h2>
         <div className="w-1/2 flex justify-end">
           <button
-            className="py-2 px-4 bg-pinkPrimary rounded-md font-bold text-white flex flex-row gap-1 items-center"
+            className="py-2 px-4 bg-pinkPrimary rounded-md font-bold text-white flex flex-row gap-1 items-center disabled:bg-pink-300"
+            disabled={!links}
             onClick={() => {
               if (links && links?.length > 0) {
                 toast.error(

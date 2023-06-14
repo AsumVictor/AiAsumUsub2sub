@@ -19,6 +19,6 @@ router.patch("/", (req, res) => {
 router.delete("/", (req, res) => {
   res.json({ message: "Delete a link" });
 });
-router.get("/user/:userId", getUserLinks);
+router.get("/user", getUserLinks);
 
 module.exports = router;

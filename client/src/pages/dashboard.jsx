@@ -22,16 +22,11 @@ function Dashboard() {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(
-          "http://localhost:4000/subscriptions/sub",
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          }
-        );
-
-        console.log(res)
+        const res = await axios.get("http://localhost:4000/subscriptions/sub", {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        });
 
         if (res.status === 200) {
           setPosts(res.data.data.links);
@@ -83,7 +78,7 @@ function Dashboard() {
       }
     }
   }
-  // Check number od subscribed links
+
   return (
     <div className="w-full py-2 mt-10 px-3 md:px-10 pb-20">
       <h1 className="text-[18px] font-semibold text-darkTextPrimary">
@@ -113,15 +108,25 @@ function Dashboard() {
           <div className="w-full bg-darkPrimary rounded-full h-3 mt-10">
             <div
               className=" bg-pinkPrimary h-3 rounded-full"
-              style={{ width: `${(numberOfSubscribedLinks / 50) * 100}%` }}
+              style={{
+                width: `${((numberOfSubscribedLinks / 70) * 100).toFixed(1)}%`,
+              }}
             ></div>
           </div>
 
           <div className="w-full mt-5 flex flex-row justify-between">
-            <h4 className=" text-darkTextPrimary font-semibold">
-              {`${(numberOfSubscribedLinks / 50) * 100}% completed`}
-            </h4>
-            <h4 className="text-darkTextPrimary font-semibold">{`${numberOfSubscribedLinks} / 50`}</h4>
+            {posts ? (
+              <h4 className=" text-darkTextPrimary font-semibold">
+                {`${((numberOfSubscribedLinks / 70) * 100).toFixed(
+                  1
+                )}% completed`}
+              </h4>
+            ) : (
+              <div className=" rounded-2xl flex justify-start items-center text-[16px] text-darkTextPrimary col-span-9 font-semibold">
+                ............
+              </div>
+            )}
+            <h4 className="text-darkTextPrimary font-semibold">{`${numberOfSubscribedLinks} / 70`}</h4>
           </div>
 
           <h4 className=" text-darkTextPrimary font-semibold mt-10 flex flex-row gap-4">
@@ -174,21 +179,38 @@ function Dashboard() {
             </div>
           </div>
 
-          <div className="w-full bg-darkPrimary rounded-full h-3 mt-10">
-            <div
-              className=" bg-pinkPrimary h-3 rounded-full"
-              style={{
-                width: `${(numberOfSubscribedLinks / posts?.length) * 100}%`,
-              }}
-            ></div>
-          </div>
+          {posts?.length > 0 ? (
+            <div className="w-full bg-darkPrimary rounded-full h-3 mt-10">
+              <div
+                className=" bg-pinkPrimary h-3 rounded-full"
+                style={{
+                  width: `${(
+                    (numberOfSubscribedLinks / posts?.length) *
+                    100
+                  ).toFixed(1)}}%`,
+                }}
+              ></div>
+            </div>
+          ) : (
+            <div className=" rounded-2xl flex justify-start items-center text-[16px] text-darkTextPrimary col-span-9 font-semibold">
+              No available data
+            </div>
+          )}
 
-          <div className="w-full mt-5 flex flex-row justify-between">
-            <h4 className=" text-darkTextPrimary font-semibold">
-              {`${(numberOfSubscribedLinks / posts?.length) * 100}% completed`}
-            </h4>
-            <h4 className="text-darkTextPrimary font-semibold">{`${numberOfSubscribedLinks} / ${posts?.length}`}</h4>
-          </div>
+          {posts?.length > 0 ? (
+            <div className="w-full mt-5 flex flex-row justify-between">
+              <h4 className=" text-darkTextPrimary font-semibold">
+                {`${((numberOfSubscribedLinks / posts?.length) * 100).toFixed(
+                  1
+                )}% completed`}
+              </h4>
+              <h4 className="text-darkTextPrimary font-semibold">{`${numberOfSubscribedLinks} / ${posts?.length}`}</h4>
+            </div>
+          ) : (
+            <div className=" rounded-2xl flex justify-start items-center text-[16px] text-darkTextPrimary col-span-9 font-semibold">
+              ...........
+            </div>
+          )}
 
           <h4 className=" text-darkTextPrimary font-semibold mt-10 flex flex-row gap-4">
             <span className=" text-pinkPrimary">Total links submitted:</span>

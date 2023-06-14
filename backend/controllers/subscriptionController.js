@@ -10,7 +10,10 @@ const getAllSubscription = async (req, res) => {
 
 // add subscription
 const addNewSubscription = async (req, res) => {
-  const { youtubeID, user } = req.body;
+  const { youtubeID } = req.body;
+  const { _id } = req.user._id;
+
+  const user =   _id.toString() 
 
   if (!youtubeID || !user) {
     return res.status(400).json({
@@ -68,7 +71,9 @@ const addNewSubscription = async (req, res) => {
 
 // get subscription by user
 const getUserSubscription = async (req, res) => {
-  const { userId } = req.params;
+  const { _id } = req.user._id;
+
+  const userId =   _id.toString() 
 
   if (!userId) {
     return res.status(400).json({
