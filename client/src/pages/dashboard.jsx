@@ -22,7 +22,7 @@ function Dashboard() {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:4000/subscriptions/sub", {
+        const res = await axios.get("https://api-aiasum-u-sub2sub.onrender.com/subscriptions/sub", {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },

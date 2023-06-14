@@ -30,7 +30,7 @@ const Task = () => {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:4000/subscriptions/sub", {
+        const res = await axios.get("https://api-aiasum-u-sub2sub.onrender.com/subscriptions/sub", {
           headers: {
             Authorization: `Bearer ${user.token}`,
             "Content-Type": "application/json",
@@ -90,7 +90,7 @@ const Task = () => {
       const res = await axios(
         {
           method: "post",
-          url: "http://localhost:4000/subscriptions",
+          url: "https://api-aiasum-u-sub2sub.onrender.com/subscriptions",
           headers: {
             Authorization: `Bearer ${user.token}`,
             "Content-Type": "application/json",
