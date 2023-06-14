@@ -16,7 +16,7 @@ function Login() {
     e.preventDefault();
     try {
       setIsloading(true);
-      const res = await axios.post("http://localhost:4000/user/auth", {
+      const res = await axios.post("https://api-aiasum-u-sub2sub.onrender.com/user/auth", {
         email: userEmail,
         password,
       });

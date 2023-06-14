@@ -66,7 +66,7 @@ function Portal() {
     try {
       setLoading(true);
       const res = await axios.get(
-        "http://localhost:4000/links/user", {
+        "https://api-aiasum-u-sub2sub.onrender.com/links/user", {
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -119,7 +119,7 @@ function Portal() {
       setLoading(true);
       const res = await axios({
         method: "post",
-        url: "http://localhost:4000/links",
+        url: "https://api-aiasum-u-sub2sub.onrender.com/links",
         headers: {
           Authorization: `Bearer ${user.token}`,
           "Content-Type": "application/json",

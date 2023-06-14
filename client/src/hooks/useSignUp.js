@@ -10,7 +10,7 @@ export const useSignUp = () => {
   const signUp = async (email, password) => {
 try {
     setIsloading(true);
-    const res = await axios.post("http://localhost:4000/user/register", {
+    const res = await axios.post("https://api-aiasum-u-sub2sub.onrender.com/user/register", {
       email,
       password,
     });
