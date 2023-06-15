@@ -50,39 +50,40 @@ const signup = async (req, res) => {
     });
   }
 
-  const { valid } = await emailValidator.validate(email);
-  if (!valid) {
-    return res
-      .status(400)
-      .json({
-        message: " Please provide a valid email address",
-        isSuccess: false,
-      });
-  }
-
   const duplicate = await UserModel.findOne({ email }).lean().exec();
 
-  if (duplicate) {
-    return res.status(409).json({ message: "It seems this user aleady exist" });
-  }
+   if (duplicate) {
+     return res.status(409).json({ message: "It seems this user aleady exist" });
+   }
 
-  const salt = await bcrypt.genSalt(10);
+  const  validator  = await emailValidator.validate(email);
+  
+     if (!validator.valid) {
+     return res
+       .status(400)
+       .json({
+         message: "Please provide a valid email address",
+         isSuccess: false,
+       });
+   }
+  
+   const salt = await bcrypt.genSalt(10);
 
-  const hashedPassword = await bcrypt.hash(password, salt);
+   const hashedPassword = await bcrypt.hash(password, salt);
 
-  let user = await UserModel.create({
-    email,
-    password: hashedPassword,
-  });
+   let user = await UserModel.create({
+     email,
+     password: hashedPassword,
+   });
 
-  if (!user) {
-    return res
-      .status(400)
-      .json({ message: "Error occured! try again", isSuccess: false });
-  }
+   if (!user) {
+     return res
+       .status(400)
+       .json({ message: "Error occured! try again", isSuccess: false });
+   }
 
-  const token = createToken(user._id);
-  return res.status(200).json({ email, token });
+   const token = createToken(user._id);
+   return res.status(200).json({ email, avatar: user.avatar, token });
 };
 
 //update a user
