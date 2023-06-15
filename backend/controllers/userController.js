@@ -56,16 +56,16 @@ const signup = async (req, res) => {
      return res.status(409).json({ message: "It seems this user aleady exist" });
    }
 
-  const  validator  = await emailValidator.validate(email);
+  // const  validator  = await emailValidator.validate(email);
   
-     if (!validator.valid) {
-     return res
-       .status(400)
-       .json({
-         message: "Please provide a valid email address",
-         isSuccess: false,
-       });
-   }
+  //    if (!validator.valid) {
+  //    return res
+  //      .status(400)
+  //      .json({
+  //        message: "Please provide a valid email address",
+  //        isSuccess: false,
+  //      });
+  //  }
   
    const salt = await bcrypt.genSalt(10);
 
@@ -83,7 +83,7 @@ const signup = async (req, res) => {
    }
 
    const token = createToken(user._id);
-   return res.status(200).json({ email, avatar: user.avatar, token });
+   return res.status(200).json({ email, avatar:user.avatar, token });
 };
 
 //update a user
