@@ -34,7 +34,7 @@ Harness the power of collaboration and watch your subscriber count soar! ðŸ“ˆðŸ”
 ## Getting Started
 To get started with AiAsum Boost, follow these steps:
 
-1. Visit [the Official website](https://aiasumusub2sub.onrender.com/)
+1. Visit [the Official website](https://aiasumlinkx.onrender.com)
 
 2. Sign up for a new account or log in using your existing credentials.
 
